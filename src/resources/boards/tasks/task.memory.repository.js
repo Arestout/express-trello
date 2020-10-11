@@ -1,4 +1,4 @@
-const DB = require('../../common/DB/tasks');
+const DB = require('../../../common/DB/tasks');
 
 const getAll = async id => await DB.getAllTasks(id);
 

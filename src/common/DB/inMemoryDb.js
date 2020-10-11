@@ -1,6 +1,6 @@
 const User = require('../../resources/users/user.model');
 const Board = require('../../resources/boards/board.model');
-const Task = require('../../resources/tasks/task.model');
+const Task = require('../../resources/boards/tasks/task.model');
 
 const DB = {
   users: [],
@@ -27,5 +27,6 @@ const addTasks = () => {
 };
 
 addTasks();
+// console.log(DB.tasks);
 
 module.exports = { DB };

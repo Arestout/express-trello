@@ -1,8 +1,8 @@
-const router = require('express').Router();
+const router = require('express').Router({ mergeParams: true });
 const Task = require('./task.model');
 const tasksService = require('./task.service');
 
-router.route('/:boardId/tasks').get(async (req, res) => {
+router.route('/').get(async (req, res) => {
   try {
     const tasks = await tasksService.getAll(req.params.boardId);
     res.status(200).send(tasks);
@@ -11,7 +11,7 @@ router.route('/:boardId/tasks').get(async (req, res) => {
   }
 });
 
-router.route('/:boardId/tasks/:taskId').get(async (req, res) => {
+router.route('/:taskId').get(async (req, res) => {
   try {
     const task = await tasksService.getById(req.params.taskId);
     res.status(200).send(task);
@@ -20,7 +20,7 @@ router.route('/:boardId/tasks/:taskId').get(async (req, res) => {
   }
 });
 
-router.route('/:boardId/tasks').post(async (req, res) => {
+router.route('/').post(async (req, res) => {
   try {
     const { boardId } = req.params;
     const { title, description, order, userId, columnId } = req.body;
@@ -34,7 +34,7 @@ router.route('/:boardId/tasks').post(async (req, res) => {
   }
 });
 
-router.route('/:boardId/tasks/:taskId').put(async (req, res) => {
+router.route('/:taskId').put(async (req, res) => {
   try {
     const task = await tasksService.update(req.params.taskId, req.body);
     res.status(200).send(task);
@@ -43,10 +43,11 @@ router.route('/:boardId/tasks/:taskId').put(async (req, res) => {
   }
 });
 
-router.route('/:boardId/tasks/:taskId').delete(async (req, res) => {
+router.route('/:taskId').delete(async (req, res) => {
   try {
-    const task = await tasksService.remove(req.params.taskId);
-    res.status(204).send(task);
+    const { taskId } = req.params;
+    await tasksService.remove(taskId);
+    res.status(204).send('OK');
   } catch (err) {
     res.status(404).send(err.message);
   }

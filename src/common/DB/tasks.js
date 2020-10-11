@@ -23,6 +23,7 @@ const getTask = async id => {
 const createTask = async task => {
   try {
     DB.tasks.push(task);
+    // console.log('after create', DB.tasks);
     return task;
   } catch (error) {
     console.log(error.message);
@@ -47,13 +48,14 @@ const updateTask = async (id, data) => {
 
 const removeTask = async id => {
   try {
+    console.log('beforeDelete', DB.tasks);
     const taskIndex = DB.tasks.findIndex(task => task.id === id);
 
     let deletedTask = null;
     if (taskIndex !== -1) {
       deletedTask = DB.tasks.splice(taskIndex, 1)[0];
     }
-
+    // console.log('deleted', DB.tasks);
     return deletedTask;
   } catch (error) {
     console.log(error.message);
