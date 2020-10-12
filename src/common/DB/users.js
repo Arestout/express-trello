@@ -1,5 +1,4 @@
 const { DB } = require('./inMemoryDb');
-const { updateTasksUser } = require('./tasks');
 
 const getAllUsers = async () => {
   return DB.users.slice(0);
@@ -35,7 +34,6 @@ const removeUser = async id => {
   let deletedUser = null;
   if (userIndex !== -1) {
     deletedUser = DB.users.splice(userIndex, 1)[0];
-    updateTasksUser(id);
   }
 
   return deletedUser;

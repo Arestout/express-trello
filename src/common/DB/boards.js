@@ -1,5 +1,4 @@
 const { DB } = require('./inMemoryDb');
-const { removeTasksByBoardId } = require('./tasks');
 
 const getAllBoards = async () => DB.boards.slice(0);
 
@@ -34,7 +33,6 @@ const removeBoard = async id => {
   let deletedBoard = null;
   if (boardIndex !== -1) {
     deletedBoard = DB.boards.splice(boardIndex, 1)[0];
-    removeTasksByBoardId(id);
   }
 
   return deletedBoard;
