@@ -32,8 +32,13 @@ const createTask = async task => {
 
 const updateTask = async (id, data) => {
   try {
-    const index = null;
-    const task = DB.tasks.find(taskItem => taskItem.id === id);
+    let index = null;
+    const task = DB.tasks.find((taskItem, taskIndex) => {
+      if (taskItem.id === id) {
+        index = taskIndex;
+        return taskItem;
+      }
+    });
     if (task) {
       const newTask = { ...task, ...data };
       DB.tasks.splice(index, 1, newTask);
