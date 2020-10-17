@@ -1,4 +1,4 @@
-export class ValidationError extends Error {
+class ValidationError extends Error {
   constructor(...args) {
     super(...args);
     const [, statusCode = 400] = args;
@@ -20,3 +20,5 @@ export class ValidationError extends Error {
     this.statusCode = statusCode;
   }
 }
+
+module.exports = { ValidationError };
