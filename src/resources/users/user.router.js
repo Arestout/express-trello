@@ -1,23 +1,28 @@
 const router = require('express').Router();
-const User = require('./user.model');
+const { User, UserSchemaPost, UserSchemaPut } = require('./user.model');
 const usersService = require('./user.service');
 const wrapAsync = require('../../utils/wrapAsync');
+const validator = require('../../utils/validator');
 
-router.route('/').get(
+router.get(
+  '/',
   wrapAsync(async (req, res) => {
     const users = await usersService.getAll();
     res.status(200).send(users.map(User.toResponse));
   })
 );
 
-router.route('/:id').get(
+router.get(
+  '/:id',
   wrapAsync(async (req, res) => {
     const user = await usersService.getById(req.params.id);
     res.status(200).send(User.toResponse(user));
   })
 );
 
-router.route('/').post(
+router.post(
+  '/',
+  [validator(UserSchemaPost)],
   wrapAsync(async (req, res) => {
     const { login, password, name } = req.body;
     const user = await usersService.create(new User({ login, password, name }));
@@ -25,14 +30,17 @@ router.route('/').post(
   })
 );
 
-router.route('/:id').put(
+router.put(
+  '/:id',
+  [validator(UserSchemaPut)],
   wrapAsync(async (req, res) => {
     const user = await usersService.update(req.params.id, req.body);
     res.status(200).send(User.toResponse(user));
   })
 );
 
-router.route('/:id').delete(
+router.delete(
+  '/:id',
   wrapAsync(async (req, res) => {
     const user = await usersService.remove(req.params.id);
     res.status(204).send(User.toResponse(user));

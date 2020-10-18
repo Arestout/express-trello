@@ -1,4 +1,4 @@
-const { notFoundLogger, validationLogger, errorLogger } = require('./logger');
+const { notFoundLogger, validationLogger, errorLogger } = require('../logger');
 
 // eslint-disable-next-line no-unused-vars
 const errorHandler = (error, req, res, next) => {

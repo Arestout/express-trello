@@ -1,4 +1,5 @@
 const { DB } = require('./inMemoryDb');
+const { Task } = require('../../resources/boards/tasks/task.model');
 
 const getAllTasks = async id => {
   try {
@@ -40,7 +41,7 @@ const updateTask = async (id, data) => {
       }
     });
     if (task) {
-      const newTask = { ...task, ...data };
+      const newTask = new Task({ ...task, ...data });
       DB.tasks.splice(index, 1, newTask);
       return newTask;
     }

@@ -1,5 +1,27 @@
 const uuid = require('uuid');
 
+const BoardSchemaPut = {
+  type: 'object',
+  properties: {
+    title: { type: 'string' },
+    columns: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          title: { type: 'string' },
+          order: { type: 'integer' }
+        }
+      }
+    }
+  }
+};
+
+const BoardSchemaPost = {
+  ...BoardSchemaPut,
+  required: ['title', 'columns']
+};
+
 class Board {
   constructor({
     id = uuid(),
@@ -28,4 +50,4 @@ class Board {
   }
 }
 
-module.exports = Board;
+module.exports = { Board, BoardSchemaPost, BoardSchemaPut };

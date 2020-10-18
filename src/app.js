@@ -3,13 +3,14 @@ const swaggerUI = require('swagger-ui-express');
 const path = require('path');
 const YAML = require('yamljs');
 
-const { errorLogger, requestLogger } = require('./utils/logger');
 const { NotFoundError } = require('./common/errors/');
 
 const userRouter = require('./resources/users/user.router');
 const boardRouter = require('./resources/boards/board.router');
 const taskRouter = require('./resources/boards/tasks/task.router');
-const errorHandler = require('./utils/errorHandler');
+
+const errorHandler = require('./utils/handlers/errorHandler');
+const requestLoggerHandler = require('./utils/handlers/requestLoggerHandler');
 
 const app = express();
 const swaggerDocument = YAML.load(path.join(__dirname, '../doc/api.yaml'));
@@ -20,22 +21,7 @@ app.use(express.json());
 app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
 // Request Logger
-app.use((req, res, next) => {
-  const query =
-    Object.keys(req.query).length > 0 ? JSON.stringify(req.query) : '';
-  let body = null;
-
-  if (req.method !== 'GET') {
-    body = JSON.stringify(req.body, null, 2);
-  }
-
-  requestLogger.debug(
-    `${req.method} ${req.url} | Query: ${query} | ${
-      body ? `\nBody: ${body}` : ''
-    }`
-  );
-  next();
-});
+app.use(requestLoggerHandler);
 
 // Routes
 app.use('/', (req, res, next) => {
@@ -57,15 +43,10 @@ app.use('*', (req, res, next) => {
   next(error);
 });
 
+// Error Handler
 app.use(errorHandler);
 
-process
-  .on('unhandledRejection', reason => {
-    errorLogger.error('Unhandled Rejection at Promise: ', reason);
-  })
-  .on('uncaughtException', err => {
-    errorLogger.error('Uncaught Exception thrown: ', err);
-  });
+// unhandledRejection and uncaughtException are handled by Winston logger
 
 // throw Error('Oops!');
 // Promise.reject(Error('Oops! Promise!'));

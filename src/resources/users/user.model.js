@@ -1,5 +1,19 @@
 const uuid = require('uuid');
 
+const UserSchemaPut = {
+  type: 'object',
+  properties: {
+    name: { type: 'string' },
+    login: { type: 'string' },
+    password: { type: 'string' }
+  }
+};
+
+const UserSchemaPost = {
+  ...UserSchemaPut,
+  required: ['name', 'login', 'password']
+};
+
 class User {
   constructor({
     id = uuid(),
@@ -19,4 +33,4 @@ class User {
   }
 }
 
-module.exports = User;
+module.exports = { User, UserSchemaPost, UserSchemaPut };

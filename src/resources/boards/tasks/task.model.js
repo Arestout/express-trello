@@ -1,5 +1,22 @@
 const uuid = require('uuid');
 
+const TaskSchemaPut = {
+  type: 'object',
+  properties: {
+    title: { type: 'string' },
+    description: { type: 'string' },
+    userId: { oneOf: [{ type: 'string' }, { type: 'null' }] },
+    boardId: { oneOf: [{ type: 'string' }, { type: 'null' }] },
+    columnId: { oneOf: [{ type: 'string' }, { type: 'null' }] },
+    order: { type: 'integer' }
+  }
+};
+
+const TaskSchemaPost = {
+  ...TaskSchemaPut,
+  required: ['title', 'description', 'userId', 'boardId', 'order']
+};
+
 class Task {
   constructor({
     id = uuid(),
@@ -20,4 +37,4 @@ class Task {
   }
 }
 
-module.exports = Task;
+module.exports = { Task, TaskSchemaPost, TaskSchemaPut };
