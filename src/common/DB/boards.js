@@ -1,4 +1,5 @@
 const { DB } = require('./inMemoryDb');
+const { Board } = require('../../resources/boards/board.model');
 
 const getAllBoards = async () => DB.boards.slice(0);
 
@@ -19,7 +20,7 @@ const updateBoard = async (id, data) => {
     }
   });
   if (board) {
-    const newBoard = { ...board, ...data };
+    const newBoard = new Board({ ...board, ...data });
     DB.boards.splice(index, 1, newBoard);
     return newBoard;
   }

@@ -1,11 +1,12 @@
 const DB = require('../../../common/DB/tasks');
+const { NotFoundError } = require('../../../common/errors/notFoundError');
 
 const getAll = async id => await DB.getAllTasks(id);
 
 const getById = async id => {
   const task = await DB.getTask(id);
 
-  if (!task) throw new Error(`The task with id ${id} was not found`);
+  if (!task) throw new NotFoundError(`The task with id ${id} was not found`);
 
   return task;
 };
@@ -13,7 +14,9 @@ const getById = async id => {
 const create = async task => {
   const newTask = await DB.createTask(task);
 
-  if (!newTask) throw new Error(`Could not create task with id ${task.id}`);
+  if (!newTask) {
+    throw new NotFoundError(`Could not create task with id ${task.id}`);
+  }
 
   return newTask;
 };
@@ -21,7 +24,7 @@ const create = async task => {
 const update = async (id, data) => {
   const task = await DB.updateTask(id, data);
 
-  if (!task) throw new Error('Could not update task with id ${id}');
+  if (!task) throw new NotFoundError('Could not update task with id ${id}');
 
   return task;
 };
@@ -29,7 +32,7 @@ const update = async (id, data) => {
 const remove = async id => {
   const task = await DB.removeTask(id);
 
-  if (!task) throw new Error('Could not remove task with id ${id}');
+  if (!task) throw new NotFoundError('Could not remove task with id ${id}');
 
   return task;
 };

@@ -1,4 +1,5 @@
 const { DB } = require('./inMemoryDb');
+const { User } = require('../../resources/users/user.model');
 
 const getAllUsers = async () => {
   return DB.users.slice(0);
@@ -20,7 +21,7 @@ const updateUser = async (id, data) => {
     }
   });
   if (user) {
-    const newUser = { ...user, ...data };
+    const newUser = new User({ ...user, ...data });
     DB.users.splice(index, 1, newUser);
     return newUser;
   }
