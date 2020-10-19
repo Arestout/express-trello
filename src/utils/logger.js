@@ -19,16 +19,13 @@ const errorLogger = createLogger({
   level: 'error',
   format: combine(timestamp(), logFormat),
   transports: [
-    new transports.File({ filename: filenameError, level: 'error' }),
-    new transports.Console()
-  ],
-  rejectionHandlers: [
-    new transports.File({ filename: filenameError }),
-    new transports.Console()
-  ],
-  exceptionHandlers: [
-    new transports.File({ filename: filenameError }),
-    new transports.Console()
+    new transports.File({
+      filename: filenameError,
+      level: 'error',
+      handleExceptions: true,
+      handleRejections: true
+    }),
+    new transports.Console({ handleExceptions: true, handleRejections: true })
   ]
 });
 
@@ -52,22 +49,14 @@ const requestLogger = createLogger({
   format: combine(timestamp(), logFormat),
   level: 'debug',
   transports: [
-    new transports.File({ filename: filenameRequest, level: 'error' })
+    new transports.File({ filename: filenameRequest, level: 'debug' })
   ]
 });
 
 if (process.env.NODE_ENV !== 'production') {
-  const loggers = [
-    errorLogger,
-    validationLogger,
-    notFoundLogger,
-    requestLogger
-  ];
+  const loggers = [validationLogger, notFoundLogger, requestLogger];
   loggers.forEach(logger => logger.add(new transports.Console()));
 }
-
-// errorLogger.rejections.handle(new transports.File({ filename: filenameError }));
-// errorLogger.exceptions.handle(new transports.File({ filename: filenameError }));
 
 module.exports = {
   errorLogger,

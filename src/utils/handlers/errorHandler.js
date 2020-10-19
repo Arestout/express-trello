@@ -15,7 +15,6 @@ const errorHandler = (error, req, res, next) => {
       break;
 
     default:
-      errorLogger.error(errorMessage);
       break;
   }
 
