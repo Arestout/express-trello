@@ -1,4 +1,28 @@
+const mongoose = require('mongoose');
 const uuid = require('uuid');
+
+const UserSchema = new mongoose.Schema(
+  {
+    id: {
+      type: String,
+      required: true,
+      default: uuid
+    },
+    name: {
+      type: String,
+      required: true
+    },
+    login: {
+      type: String,
+      required: true
+    },
+    password: {
+      type: String,
+      required: true
+    }
+  },
+  { versionKey: false }
+);
 
 const UserSchemaPut = {
   type: 'object',
@@ -14,6 +38,7 @@ const UserSchemaPost = {
   required: ['name', 'login', 'password']
 };
 
+const users = mongoose.model('users', UserSchema);
 class User {
   constructor({
     id = uuid(),
@@ -33,4 +58,4 @@ class User {
   }
 }
 
-module.exports = { User, UserSchemaPost, UserSchemaPut };
+module.exports = { User, UserSchemaPost, UserSchemaPut, users };

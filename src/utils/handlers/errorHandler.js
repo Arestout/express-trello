@@ -15,11 +15,16 @@ const errorHandler = (error, req, res, next) => {
       break;
 
     default:
+      errorLogger.error(errorMessage);
       break;
   }
 
-  const status = statusCode ? statusCode : 500;
-  res.status(status).send({ message });
+  if (statusCode) {
+    res.status(statusCode).send({ message });
+    return;
+  }
+
+  res.sendStatus(500);
 };
 
 module.exports = errorHandler;

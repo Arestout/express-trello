@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const uuid = require('uuid');
 
 const BoardSchemaPut = {
@@ -21,6 +22,35 @@ const BoardSchemaPost = {
   ...BoardSchemaPut,
   required: ['title', 'columns']
 };
+
+const BoardSchema = new mongoose.Schema(
+  {
+    id: {
+      type: String,
+      required: true,
+      default: uuid
+    },
+    title: {
+      type: String,
+      required: true
+    },
+    columns: [
+      {
+        title: {
+          type: String,
+          required: true
+        },
+        order: {
+          type: Number,
+          required: true
+        }
+      }
+    ]
+  },
+  { versionKey: false }
+);
+
+const boards = mongoose.model('boards', BoardSchema);
 
 class Board {
   constructor({
@@ -50,4 +80,4 @@ class Board {
   }
 }
 
-module.exports = { Board, BoardSchemaPost, BoardSchemaPut };
+module.exports = { Board, BoardSchemaPost, BoardSchemaPut, boards };

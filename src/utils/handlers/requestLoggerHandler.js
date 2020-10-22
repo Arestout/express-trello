@@ -11,12 +11,13 @@ const requestLoggerHandler = (req, res, next) => {
   let body = null;
 
   if (req.method !== 'GET') {
-    req.body.password && (req.body.password = maskPassword(req.body.password));
+    const reqBody = { ...req.body };
+    reqBody.password && (reqBody.password = maskPassword(reqBody.password));
 
-    body = JSON.stringify(req.body, null, 2);
+    body = JSON.stringify(reqBody, null, 2);
   }
 
-  requestLogger.debug(
+  requestLogger.info(
     `${req.method} ${req.url} | Query: ${query} | ${
       body ? `\nBody: ${body}` : ''
     }`

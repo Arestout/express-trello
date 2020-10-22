@@ -1,5 +1,5 @@
 const router = require('express').Router({ mergeParams: true });
-const { Task, TaskSchemaPost, TaskSchemaPut } = require('./task.model');
+const { TaskSchemaPost, TaskSchemaPut } = require('./task.model');
 const tasksService = require('./task.service');
 const wrapAsync = require('../../../utils/wrapAsync');
 const validator = require('../../../utils/validator');
@@ -15,7 +15,8 @@ router.get(
 router.get(
   '/:taskId',
   wrapAsync(async (req, res) => {
-    const task = await tasksService.getById(req.params.taskId);
+    const { taskId } = req.params;
+    const task = await tasksService.getById(taskId);
     res.status(200).send(task);
   })
 );
@@ -25,10 +26,7 @@ router.post(
   [validator(TaskSchemaPost)],
   wrapAsync(async (req, res) => {
     const { boardId } = req.params;
-    const { title, description, order, userId, columnId } = req.body;
-    const task = await tasksService.create(
-      new Task({ title, description, order, userId, columnId, boardId })
-    );
+    const task = await tasksService.create({ ...req.body, boardId });
     res.status(200).send(task);
   })
 );
@@ -37,7 +35,8 @@ router.put(
   '/:taskId',
   [validator(TaskSchemaPut)],
   wrapAsync(async (req, res) => {
-    const task = await tasksService.update(req.params.taskId, req.body);
+    const { taskId } = req.params;
+    const task = await tasksService.update(taskId, req.body);
     res.status(200).send(task);
   })
 );
