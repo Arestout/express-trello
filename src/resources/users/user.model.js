@@ -1,13 +1,9 @@
 const mongoose = require('mongoose');
 const uuid = require('uuid');
+const { tasks } = require('../boards/tasks/task.model');
 
 const UserSchema = new mongoose.Schema(
   {
-    id: {
-      type: String,
-      required: true,
-      default: uuid
-    },
     name: {
       type: String,
       required: true
@@ -23,6 +19,20 @@ const UserSchema = new mongoose.Schema(
   },
   { versionKey: false }
 );
+
+UserSchema.statics.toResponse = user => {
+  const { _id, id = _id, ...rest } = user;
+  return { id, ...rest };
+};
+
+UserSchema.post('deleteOne', async function(doc, next) {
+  const query = { userId: this._conditions._id };
+  const data = { userId: null };
+
+  await tasks.updateMany(query, data);
+
+  next();
+});
 
 const UserSchemaPut = {
   type: 'object',

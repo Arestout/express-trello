@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { UserSchemaPost, UserSchemaPut } = require('./user.model');
+const { UserSchemaPost, UserSchemaPut, users } = require('./user.model');
 const usersService = require('./user.service');
 const wrapAsync = require('../../utils/wrapAsync');
 const validator = require('../../utils/validator');
@@ -7,8 +7,8 @@ const validator = require('../../utils/validator');
 router.get(
   '/',
   wrapAsync(async (req, res) => {
-    const users = await usersService.getAll();
-    res.status(200).send(users);
+    const dbUsers = await usersService.getAll();
+    res.status(200).send(dbUsers.map(users.toResponse));
   })
 );
 
@@ -16,7 +16,7 @@ router.get(
   '/:id',
   wrapAsync(async (req, res) => {
     const user = await usersService.getById(req.params.id);
-    res.status(200).send(user);
+    res.status(200).send(users.toResponse(user));
   })
 );
 
@@ -26,7 +26,7 @@ router.post(
   wrapAsync(async (req, res) => {
     const { login, password, name } = req.body;
     const user = await usersService.create({ login, password, name });
-    res.status(200).send(user);
+    res.status(200).send(users.toResponse(user));
   })
 );
 
@@ -35,7 +35,7 @@ router.put(
   [validator(UserSchemaPut)],
   wrapAsync(async (req, res) => {
     const user = await usersService.update(req.params.id, req.body);
-    res.status(200).send(user);
+    res.status(200).send(users.toResponse(user));
   })
 );
 

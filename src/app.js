@@ -2,6 +2,7 @@ const express = require('express');
 const swaggerUI = require('swagger-ui-express');
 const path = require('path');
 const YAML = require('yamljs');
+const helmet = require('helmet');
 
 const { NotFoundError } = require('./common/errors/');
 
@@ -13,12 +14,17 @@ const errorHandler = require('./utils/handlers/errorHandler');
 const requestLoggerHandler = require('./utils/handlers/requestLoggerHandler');
 
 const app = express();
+app.disable('x-powered-by');
+
 const swaggerDocument = YAML.load(path.join(__dirname, '../doc/api.yaml'));
 
+app.use(helmet());
 app.use(express.json());
 
 // Swagger
-app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
+if (process.env.NODE_ENV === 'development') {
+  app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
+}
 
 // Request Logger
 app.use(requestLoggerHandler);

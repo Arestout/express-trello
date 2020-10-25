@@ -20,11 +20,6 @@ const TaskSchemaPost = {
 
 const TaskSchema = new mongoose.Schema(
   {
-    id: {
-      type: String,
-      required: true,
-      default: uuid
-    },
     title: {
       type: String,
       required: true
@@ -56,6 +51,11 @@ const TaskSchema = new mongoose.Schema(
   { versionKey: false }
 );
 
+TaskSchema.statics.toResponse = task => {
+  const { _id, id = _id, ...rest } = task;
+  return { id, ...rest };
+};
+
 const tasks = mongoose.model('tasks', TaskSchema);
 
 class Task {
@@ -78,4 +78,4 @@ class Task {
   }
 }
 
-module.exports = { Task, TaskSchemaPost, TaskSchemaPut, tasks };
+module.exports = { Task, TaskSchemaPost, TaskSchemaPut, tasks, TaskSchema };

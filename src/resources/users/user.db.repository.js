@@ -1,16 +1,20 @@
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 const { users } = require('./user.model');
 const { NotFoundError } = require('../../common/errors/notFoundError');
+
+const saltRounds = 10;
 
 const getAll = async () =>
   await users
     .find()
-    .select('-_id -password')
+    .select('-password')
     .lean();
 
 const getById = async id => {
   const user = await users
-    .findOne({ id })
-    .select('-_id -password')
+    .findOne({ _id: id })
+    .select('-password')
     .lean();
 
   if (!user) throw new NotFoundError(`The user with id ${id} was not found`);
@@ -19,25 +23,37 @@ const getById = async id => {
 };
 
 const create = async userData => {
-  const newUser = await users.create(userData);
+  const options = {
+    new: true,
+    upsert: true,
+    setDefaultsOnInsert: true
+  };
 
-  if (!newUser) {
-    throw new Error(`Could not create user with id ${userData.id}`);
+  const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
+  const data = {
+    ...userData,
+    password: hashedPassword
+  };
+
+  const user = await users
+    .findOneAndUpdate({ _id: mongoose.Types.ObjectId() }, data, options)
+    .select('-password')
+    .lean();
+
+  if (!user) {
+    throw new Error('Could not create user');
   }
-
-  const { id, name, login } = newUser;
-  const user = { id, name, login };
 
   return user;
 };
 
 const update = async (id, data) => {
-  const query = { id };
+  const query = { _id: id };
   const options = { upsert: false, new: true };
 
   const user = await users
     .findOneAndUpdate(query, data, options)
-    .select('-_id -password')
+    .select('-password')
     .lean();
 
   if (!user) throw new NotFoundError(`Could not update user with id ${id}`);
@@ -47,8 +63,8 @@ const update = async (id, data) => {
 
 const remove = async id => {
   const user = await users
-    .deleteOne({ id })
-    .select('-_id -password')
+    .deleteOne({ _id: id })
+    .select('-password')
     .lean();
 
   if (!user) throw new NotFoundError(`Could not remove user with id ${id}`);

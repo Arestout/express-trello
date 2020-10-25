@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const uuid = require('uuid');
+const { tasks } = require('./tasks/task.model');
 
 const BoardSchemaPut = {
   type: 'object',
@@ -25,11 +26,6 @@ const BoardSchemaPost = {
 
 const BoardSchema = new mongoose.Schema(
   {
-    id: {
-      type: String,
-      required: true,
-      default: uuid
-    },
     title: {
       type: String,
       required: true
@@ -49,6 +45,16 @@ const BoardSchema = new mongoose.Schema(
   },
   { versionKey: false }
 );
+
+BoardSchema.statics.toResponse = board => {
+  const { _id, id = _id, ...rest } = board;
+  return { id, ...rest };
+};
+
+BoardSchema.post('deleteOne', async function(doc, next) {
+  await tasks.deleteMany({ boardId: this._conditions._id });
+  next();
+});
 
 const boards = mongoose.model('boards', BoardSchema);
 
