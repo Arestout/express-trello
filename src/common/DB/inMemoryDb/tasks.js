@@ -1,5 +1,5 @@
 const { DB } = require('./inMemoryDb');
-const { Task } = require('../../resources/boards/tasks/task.model');
+const { Task } = require('../../../resources/boards/tasks/task.model');
 
 const getAllTasks = async id => {
   try {

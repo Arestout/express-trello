@@ -1,21 +1,42 @@
+const mongoose = require('mongoose');
 const uuid = require('uuid');
 
-const TaskSchemaPut = {
-  type: 'object',
-  properties: {
-    title: { type: 'string' },
-    description: { type: 'string' },
-    userId: { oneOf: [{ type: 'string' }, { type: 'null' }] },
-    boardId: { oneOf: [{ type: 'string' }, { type: 'null' }] },
-    columnId: { oneOf: [{ type: 'string' }, { type: 'null' }] },
-    order: { type: 'integer' }
+const TaskSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true
+  },
+  description: {
+    type: String,
+    required: true
+  },
+  userId: {
+    type: String,
+    required: true,
+    default: null
+  },
+  boardId: {
+    type: String,
+    required: true,
+    default: null
+  },
+  columnId: {
+    type: String,
+    required: true,
+    default: null
+  },
+  order: {
+    type: Number,
+    required: true
   }
-};
+});
 
-const TaskSchemaPost = {
-  ...TaskSchemaPut,
-  required: ['title', 'description', 'userId', 'boardId', 'order']
-};
+TaskSchema.method('toJSON', function() {
+  const { __v, _id, ...object } = this.toObject();
+  return { id: _id, ...object };
+});
+
+const tasks = mongoose.model('tasks', TaskSchema);
 
 class Task {
   constructor({
@@ -37,4 +58,4 @@ class Task {
   }
 }
 
-module.exports = { Task, TaskSchemaPost, TaskSchemaPut };
+module.exports = { Task, tasks };

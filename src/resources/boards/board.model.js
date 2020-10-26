@@ -1,26 +1,37 @@
+const mongoose = require('mongoose');
 const uuid = require('uuid');
+const { tasks } = require('./tasks/task.model');
 
-const BoardSchemaPut = {
-  type: 'object',
-  properties: {
-    title: { type: 'string' },
-    columns: {
-      type: 'array',
-      items: {
-        type: 'object',
-        properties: {
-          title: { type: 'string' },
-          order: { type: 'integer' }
-        }
+const BoardSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true
+  },
+  columns: [
+    {
+      title: {
+        type: String,
+        required: true
+      },
+      order: {
+        type: Number,
+        required: true
       }
     }
-  }
-};
+  ]
+});
 
-const BoardSchemaPost = {
-  ...BoardSchemaPut,
-  required: ['title', 'columns']
-};
+BoardSchema.method('toJSON', function() {
+  const { __v, _id, ...object } = this.toObject();
+  return { id: _id, ...object };
+});
+
+BoardSchema.post('findOneAndDelete', async (doc, next) => {
+  await tasks.deleteMany({ boardId: doc._id });
+  next();
+});
+
+const boards = mongoose.model('boards', BoardSchema);
 
 class Board {
   constructor({
@@ -50,4 +61,4 @@ class Board {
   }
 }
 
-module.exports = { Board, BoardSchemaPost, BoardSchemaPut };
+module.exports = { Board, boards };

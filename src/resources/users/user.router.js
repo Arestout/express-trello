@@ -1,14 +1,17 @@
 const router = require('express').Router();
-const { User, UserSchemaPost, UserSchemaPut } = require('./user.model');
+const {
+  UserSchemaPost,
+  UserSchemaPut
+} = require('../../utils/validator/schemas');
 const usersService = require('./user.service');
 const wrapAsync = require('../../utils/wrapAsync');
-const validator = require('../../utils/validator');
+const validator = require('../../utils/validator/validator');
 
 router.get(
   '/',
   wrapAsync(async (req, res) => {
     const users = await usersService.getAll();
-    res.status(200).send(users.map(User.toResponse));
+    res.status(200).send(users);
   })
 );
 
@@ -16,7 +19,7 @@ router.get(
   '/:id',
   wrapAsync(async (req, res) => {
     const user = await usersService.getById(req.params.id);
-    res.status(200).send(User.toResponse(user));
+    res.status(200).send(user);
   })
 );
 
@@ -25,8 +28,8 @@ router.post(
   [validator(UserSchemaPost)],
   wrapAsync(async (req, res) => {
     const { login, password, name } = req.body;
-    const user = await usersService.create(new User({ login, password, name }));
-    res.status(200).send(User.toResponse(user));
+    const user = await usersService.create({ login, password, name });
+    res.status(200).send(user);
   })
 );
 
@@ -35,15 +38,15 @@ router.put(
   [validator(UserSchemaPut)],
   wrapAsync(async (req, res) => {
     const user = await usersService.update(req.params.id, req.body);
-    res.status(200).send(User.toResponse(user));
+    res.status(200).send(user);
   })
 );
 
 router.delete(
   '/:id',
   wrapAsync(async (req, res) => {
-    const user = await usersService.remove(req.params.id);
-    res.status(204).send(User.toResponse(user));
+    await usersService.remove(req.params.id);
+    res.sendStatus(204);
   })
 );
 

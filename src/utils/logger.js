@@ -22,6 +22,7 @@ const errorLogger = createLogger({
     new transports.File({
       filename: filenameError,
       level: 'error',
+      json: true,
       handleExceptions: true,
       handleRejections: true
     }),
@@ -47,9 +48,9 @@ const validationLogger = createLogger({
 
 const requestLogger = createLogger({
   format: combine(timestamp(), logFormat),
-  level: 'debug',
+  level: 'info',
   transports: [
-    new transports.File({ filename: filenameRequest, level: 'debug' })
+    new transports.File({ filename: filenameRequest, level: 'info' })
   ]
 });
 

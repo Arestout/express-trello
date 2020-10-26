@@ -1,8 +1,11 @@
 const router = require('express').Router();
-const { Board, BoardSchemaPost, BoardSchemaPut } = require('./board.model');
+const {
+  BoardSchemaPost,
+  BoardSchemaPut
+} = require('../../utils/validator/schemas');
 const boardsService = require('./board.service');
 const wrapAsync = require('../../utils/wrapAsync');
-const validator = require('../../utils/validator');
+const validator = require('../../utils/validator/validator');
 
 router.get(
   '/',
@@ -13,9 +16,10 @@ router.get(
 );
 
 router.get(
-  '/:id',
+  '/:boardId',
   wrapAsync(async (req, res) => {
-    const board = await boardsService.getById(req.params.id);
+    const { boardId } = req.params;
+    const board = await boardsService.getById(boardId);
     res.status(200).send(board);
   })
 );
@@ -25,25 +29,27 @@ router.post(
   [validator(BoardSchemaPost)],
   wrapAsync(async (req, res) => {
     const { title, columns } = req.body;
-    const board = await boardsService.create(new Board({ title, columns }));
+    const board = await boardsService.create({ title, columns });
     res.status(200).send(board);
   })
 );
 
 router.put(
-  '/:id',
+  '/:boardId',
   [validator(BoardSchemaPut)],
   wrapAsync(async (req, res) => {
-    const board = await boardsService.update(req.params.id, req.body);
+    const { boardId } = req.params;
+    const board = await boardsService.update(boardId, req.body);
     res.status(200).send(board);
   })
 );
 
 router.delete(
-  '/:id',
+  '/:boardId',
   wrapAsync(async (req, res) => {
-    const board = await boardsService.remove(req.params.id);
-    res.status(204).send(board);
+    const { boardId } = req.params;
+    await boardsService.remove(boardId);
+    res.sendStatus(204);
   })
 );
 

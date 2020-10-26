@@ -1,7 +1,8 @@
-const { User } = require('../../resources/users/user.model');
-const { Board } = require('../../resources/boards/board.model');
-const { Task } = require('../../resources/boards/tasks/task.model');
-
+const { User } = require('../../../resources/users/user.model');
+const { Board, boards } = require('../../../resources/boards/board.model');
+const { Task, tasks } = require('../../../resources/boards/tasks/task.model');
+const mongoose = require('mongoose');
+const usersRepo = require('../../../resources/users/user.db.repository');
 const DB = {
   users: [],
   boards: [],
@@ -27,5 +28,12 @@ const addTasks = () => {
 };
 
 addTasks();
+
+(async () => {
+  mongoose.connection.dropDatabase();
+  DB.users.forEach(async user => await usersRepo.create(user));
+  await boards.insertMany(DB.boards);
+  await tasks.insertMany(DB.tasks);
+})();
 
 module.exports = { DB };

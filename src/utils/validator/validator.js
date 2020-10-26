@@ -1,5 +1,6 @@
 const Ajv = require('ajv');
-const { ValidationError } = require('../common/errors/');
+const { ValidationError } = require('../../common/errors');
+const { BAD_REQUEST } = require('http-status-codes');
 
 const validator = schema => (req, res, next) => {
   const ajv = new Ajv({ allErrors: true });
@@ -16,7 +17,7 @@ const validator = schema => (req, res, next) => {
   next(
     new ValidationError(
       `${req.method}: ${req.originalUrl} [ ${errors} ]\n${body}`,
-      400
+      BAD_REQUEST
     )
   );
 };
