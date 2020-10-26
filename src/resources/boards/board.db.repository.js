@@ -1,11 +1,12 @@
 const mongoose = require('mongoose');
 const { boards } = require('./board.model');
 const { NotFoundError } = require('../../common/errors/notFoundError');
+const { CONFLICT } = require('http-status-codes');
 
-const getAll = async () => await boards.find().lean();
+const getAll = async () => await boards.find();
 
 const getById = async id => {
-  const board = await boards.findOne({ _id: id }).lean();
+  const board = await boards.findOne({ _id: id });
 
   if (!board) throw new NotFoundError(`The board with id ${id} was not found`);
 
@@ -19,12 +20,13 @@ const create = async boardData => {
     setDefaultsOnInsert: true
   };
 
-  const board = await boards
-    .findOneAndUpdate({ _id: mongoose.Types.ObjectId() }, boardData, options)
-    .lean();
-
+  const board = await boards.findOneAndUpdate(
+    { _id: mongoose.Types.ObjectId() },
+    boardData,
+    options
+  );
   if (!board) {
-    throw new Error('Could not create board');
+    throw new Error('Could not create board', CONFLICT);
   }
 
   return board;
@@ -34,7 +36,7 @@ const update = async (id, data) => {
   const query = { _id: id };
   const options = { upsert: false, new: true };
 
-  const board = await boards.findOneAndUpdate(query, data, options).lean();
+  const board = await boards.findOneAndUpdate(query, data, options);
 
   if (!board) throw new NotFoundError(`Could not update board with id ${id}`);
 
@@ -42,7 +44,7 @@ const update = async (id, data) => {
 };
 
 const remove = async id => {
-  const board = await boards.deleteOne({ _id: id }).lean();
+  const board = await boards.findOneAndDelete({ _id: id });
 
   if (!board) throw new NotFoundError(`Could not remove board with id ${id}`);
 

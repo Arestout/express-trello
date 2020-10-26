@@ -1,9 +1,8 @@
 // Core
 const mongoose = require('mongoose');
+const { MONGO_CONNECTION_STRING } = require('../config');
 
 const connectToDB = cb => {
-  const { MONGO_CONNECTION_STRING } = process.env;
-
   const mongooseOptions = {
     promiseLibrary: global.Promise,
     poolSize: 50,

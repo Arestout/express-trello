@@ -1,60 +1,40 @@
 const mongoose = require('mongoose');
 const uuid = require('uuid');
 
-const TaskSchemaPut = {
-  type: 'object',
-  properties: {
-    title: { type: 'string' },
-    description: { type: 'string' },
-    userId: { oneOf: [{ type: 'string' }, { type: 'null' }] },
-    boardId: { oneOf: [{ type: 'string' }, { type: 'null' }] },
-    columnId: { oneOf: [{ type: 'string' }, { type: 'null' }] },
-    order: { type: 'integer' }
-  }
-};
-
-const TaskSchemaPost = {
-  ...TaskSchemaPut,
-  required: ['title', 'description', 'userId', 'boardId', 'order']
-};
-
-const TaskSchema = new mongoose.Schema(
-  {
-    title: {
-      type: String,
-      required: true
-    },
-    description: {
-      type: String,
-      required: true
-    },
-    userId: {
-      type: String,
-      // required: true,
-      default: null
-    },
-    boardId: {
-      type: String,
-      // required: true,
-      default: null
-    },
-    columnId: {
-      type: String,
-      // required: true,
-      default: null
-    },
-    order: {
-      type: Number,
-      required: true
-    }
+const TaskSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true
   },
-  { versionKey: false }
-);
+  description: {
+    type: String,
+    required: true
+  },
+  userId: {
+    type: String,
+    required: true,
+    default: null
+  },
+  boardId: {
+    type: String,
+    required: true,
+    default: null
+  },
+  columnId: {
+    type: String,
+    required: true,
+    default: null
+  },
+  order: {
+    type: Number,
+    required: true
+  }
+});
 
-TaskSchema.statics.toResponse = task => {
-  const { _id, id = _id, ...rest } = task;
-  return { id, ...rest };
-};
+TaskSchema.method('toJSON', function() {
+  const { __v, _id, ...object } = this.toObject();
+  return { id: _id, ...object };
+});
 
 const tasks = mongoose.model('tasks', TaskSchema);
 
@@ -78,4 +58,4 @@ class Task {
   }
 }
 
-module.exports = { Task, TaskSchemaPost, TaskSchemaPut, tasks, TaskSchema };
+module.exports = { Task, tasks };

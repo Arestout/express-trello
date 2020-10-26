@@ -1,6 +1,6 @@
 const { PORT } = require('./common/config');
 const app = require('./app');
-const DB = require('./common/DB/inMemoryDb');
+const DB = require('./common/DB/inMemoryDb/inMemoryDb');
 const connectToDB = require('./common/DB/db');
 
 connectToDB(() => {

@@ -1,14 +1,17 @@
 const router = require('express').Router({ mergeParams: true });
-const { TaskSchemaPost, TaskSchemaPut, tasks } = require('./task.model');
+const {
+  TaskSchemaPost,
+  TaskSchemaPut
+} = require('../../../utils/validator/schemas');
 const tasksService = require('./task.service');
 const wrapAsync = require('../../../utils/wrapAsync');
-const validator = require('../../../utils/validator');
+const validator = require('../../../utils/validator/validator');
 
 router.get(
   '/',
   wrapAsync(async (req, res) => {
-    const dbTasks = await tasksService.getAll(req.params.boardId);
-    res.status(200).send(dbTasks.map(tasks.toResponse));
+    const tasks = await tasksService.getAll(req.params.boardId);
+    res.status(200).send(tasks);
   })
 );
 
@@ -17,7 +20,7 @@ router.get(
   wrapAsync(async (req, res) => {
     const { taskId } = req.params;
     const task = await tasksService.getById(taskId);
-    res.status(200).send(tasks.toResponse(task));
+    res.status(200).send(task);
   })
 );
 
@@ -27,7 +30,7 @@ router.post(
   wrapAsync(async (req, res) => {
     const { boardId } = req.params;
     const task = await tasksService.create({ ...req.body, boardId });
-    res.status(200).send(tasks.toResponse(task));
+    res.status(200).send(task);
   })
 );
 
@@ -37,7 +40,7 @@ router.put(
   wrapAsync(async (req, res) => {
     const { taskId } = req.params;
     const task = await tasksService.update(taskId, req.body);
-    res.status(200).send(tasks.toResponse(task));
+    res.status(200).send(task);
   })
 );
 

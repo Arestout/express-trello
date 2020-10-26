@@ -1,52 +1,53 @@
 const mongoose = require('mongoose');
 const uuid = require('uuid');
+const bcrypt = require('bcrypt');
 const { tasks } = require('../boards/tasks/task.model');
 
-const UserSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true
-    },
-    login: {
-      type: String,
-      required: true
-    },
-    password: {
-      type: String,
-      required: true
-    }
+const SALT_ROUNDS = 10;
+
+const UserSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    minlength: 3,
+    maxlength: 30
   },
-  { versionKey: false }
-);
+  login: {
+    type: String,
+    required: true,
+    minlength: 3,
+    maxlength: 30
+  },
+  password: {
+    type: String,
+    required: true
+  }
+});
 
-UserSchema.statics.toResponse = user => {
-  const { _id, id = _id, ...rest } = user;
-  return { id, ...rest };
-};
+UserSchema.method('toJSON', function() {
+  const { __v, _id, ...object } = this.toObject();
+  return { id: _id, ...object };
+});
 
-UserSchema.post('deleteOne', async function(doc, next) {
-  const query = { userId: this._conditions._id };
+UserSchema.pre('findOneAndUpdate', async function(next) {
+  if (this._update.password) {
+    this._update.password = await bcrypt.hash(
+      this._update.password,
+      SALT_ROUNDS
+    );
+  }
+
+  next();
+});
+
+UserSchema.post('findOneAndDelete', async (doc, next) => {
+  const query = { userId: doc._id };
   const data = { userId: null };
 
   await tasks.updateMany(query, data);
 
   next();
 });
-
-const UserSchemaPut = {
-  type: 'object',
-  properties: {
-    name: { type: 'string' },
-    login: { type: 'string' },
-    password: { type: 'string' }
-  }
-};
-
-const UserSchemaPost = {
-  ...UserSchemaPut,
-  required: ['name', 'login', 'password']
-};
 
 const users = mongoose.model('users', UserSchema);
 class User {
@@ -68,4 +69,4 @@ class User {
   }
 }
 
-module.exports = { User, UserSchemaPost, UserSchemaPut, users };
+module.exports = { User, users };

@@ -1,8 +1,14 @@
 const { notFoundLogger, validationLogger, errorLogger } = require('../logger');
+const {
+  INTERNAL_SERVER_ERROR,
+  getStatusText,
+  BAD_REQUEST
+} = require('http-status-codes');
 
 // eslint-disable-next-line no-unused-vars
 const errorHandler = (error, req, res, next) => {
-  const { name, message, statusCode } = error;
+  const { name, message } = error;
+  let { statusCode } = error;
   const errorMessage = `${name}: ${message}`;
 
   switch (error.name) {
@@ -12,6 +18,7 @@ const errorHandler = (error, req, res, next) => {
 
     case 'ValidationError':
       validationLogger.error(errorMessage);
+      statusCode = BAD_REQUEST;
       break;
 
     default:
@@ -24,7 +31,7 @@ const errorHandler = (error, req, res, next) => {
     return;
   }
 
-  res.sendStatus(500);
+  res.status(INTERNAL_SERVER_ERROR).send(getStatusText(INTERNAL_SERVER_ERROR));
 };
 
 module.exports = errorHandler;

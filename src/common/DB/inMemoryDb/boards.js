@@ -1,5 +1,5 @@
 const { DB } = require('./inMemoryDb');
-const { Board } = require('../../resources/boards/board.model');
+const { Board } = require('../../../resources/boards/board.model');
 
 const getAllBoards = async () => DB.boards.slice(0);
 

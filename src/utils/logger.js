@@ -54,10 +54,10 @@ const requestLogger = createLogger({
   ]
 });
 
-// if (process.env.NODE_ENV !== 'production') {
-//   const loggers = [validationLogger, notFoundLogger, requestLogger];
-//   loggers.forEach(logger => logger.add(new transports.Console()));
-// }
+if (process.env.NODE_ENV !== 'production') {
+  const loggers = [validationLogger, notFoundLogger, requestLogger];
+  loggers.forEach(logger => logger.add(new transports.Console()));
+}
 
 module.exports = {
   errorLogger,

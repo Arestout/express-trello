@@ -1,5 +1,5 @@
 const { DB } = require('./inMemoryDb');
-const { User } = require('../../resources/users/user.model');
+const { User } = require('../../../resources/users/user.model');
 
 const getAllUsers = async () => {
   return DB.users.slice(0);
