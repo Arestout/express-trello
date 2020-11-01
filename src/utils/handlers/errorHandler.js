@@ -1,4 +1,9 @@
-const { notFoundLogger, validationLogger, errorLogger } = require('../logger');
+const {
+  notFoundLogger,
+  validationLogger,
+  errorLogger,
+  authLogger
+} = require('../logger');
 const {
   INTERNAL_SERVER_ERROR,
   getStatusText,
@@ -21,14 +26,17 @@ const errorHandler = (error, req, res, next) => {
       statusCode = BAD_REQUEST;
       break;
 
+    case 'AuthError':
+      authLogger.error(errorMessage);
+      break;
+
     default:
       errorLogger.error(errorMessage);
       break;
   }
 
   if (statusCode) {
-    res.status(statusCode).send({ message });
-    return;
+    return res.status(statusCode).send({ message });
   }
 
   res.status(INTERNAL_SERVER_ERROR).send(getStatusText(INTERNAL_SERVER_ERROR));

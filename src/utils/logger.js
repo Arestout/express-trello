@@ -12,6 +12,7 @@ const filenameNotFound = path.resolve(
 const filenameValidation = path.resolve(
   path.join('logs', 'validation_errors.log')
 );
+const filenameAuth = path.resolve(path.join('logs', 'auth_errors.log'));
 const filenameRequest = path.resolve(path.join('logs', 'requests.log'));
 
 // Loggers
@@ -41,6 +42,12 @@ const notFoundLogger = createLogger({
 const validationLogger = createLogger({
   level: 'error',
   format: combine(timestamp(), logFormat),
+  transports: [new transports.File({ filename: filenameAuth, level: 'error' })]
+});
+
+const authLogger = createLogger({
+  level: 'error',
+  format: combine(timestamp(), logFormat),
   transports: [
     new transports.File({ filename: filenameValidation, level: 'error' })
   ]
@@ -55,7 +62,7 @@ const requestLogger = createLogger({
 });
 
 if (process.env.NODE_ENV !== 'production') {
-  const loggers = [validationLogger, notFoundLogger, requestLogger];
+  const loggers = [validationLogger, notFoundLogger, requestLogger, authLogger];
   loggers.forEach(logger => logger.add(new transports.Console()));
 }
 
@@ -63,5 +70,6 @@ module.exports = {
   errorLogger,
   notFoundLogger,
   validationLogger,
+  authLogger,
   requestLogger
 };

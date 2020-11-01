@@ -51,11 +51,21 @@ const TaskSchemaPost = {
   required: ['title', 'description', 'userId', 'boardId', 'order']
 };
 
+const LoginSchema = {
+  type: 'object',
+  properties: {
+    login: { type: 'string' },
+    password: { type: 'string' }
+  },
+  required: ['login', 'password']
+};
+
 module.exports = {
   UserSchemaPost,
   UserSchemaPut,
   BoardSchemaPost,
   BoardSchemaPut,
   TaskSchemaPost,
-  TaskSchemaPut
+  TaskSchemaPut,
+  LoginSchema
 };

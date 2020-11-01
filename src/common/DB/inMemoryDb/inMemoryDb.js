@@ -9,7 +9,12 @@ const DB = {
   tasks: []
 };
 
-DB.users.push(new User(), new User(), new User());
+DB.users.push(
+  new User(),
+  new User(),
+  new User({ name: 'string', login: 'string', password: 'string' }),
+  new User({ name: 'admin', login: 'admin', password: 'admin' })
+);
 DB.boards.push(new Board(), new Board(), new Board());
 
 const addTasks = () => {
@@ -30,7 +35,7 @@ const addTasks = () => {
 addTasks();
 
 (async () => {
-  mongoose.connection.dropDatabase();
+  // mongoose.connection.dropDatabase();
   DB.users.forEach(async user => await usersRepo.create(user));
   await boards.insertMany(DB.boards);
   await tasks.insertMany(DB.tasks);
