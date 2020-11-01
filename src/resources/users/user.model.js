@@ -1,9 +1,6 @@
 const mongoose = require('mongoose');
 const uuid = require('uuid');
-const bcrypt = require('bcrypt');
-const { tasks } = require('../boards/tasks/task.model');
-
-const SALT_ROUNDS = 10;
+const hashPassword = require('../../utils/auth/hashPassword');
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -25,26 +22,20 @@ const UserSchema = new mongoose.Schema({
 });
 
 UserSchema.method('toJSON', function() {
-  const { __v, _id, ...object } = this.toObject();
+  const { __v, _id, password, ...object } = this.toObject();
   return { id: _id, ...object };
 });
 
 UserSchema.pre('findOneAndUpdate', async function(next) {
   if (this._update.password) {
-    this._update.password = await bcrypt.hash(
-      this._update.password,
-      SALT_ROUNDS
-    );
+    hashPassword(this._update.password);
   }
 
   next();
 });
 
-UserSchema.post('findOneAndDelete', async (doc, next) => {
-  const query = { userId: doc._id };
-  const data = { userId: null };
-
-  await tasks.updateMany(query, data);
+UserSchema.pre('save', async function(next) {
+  hashPassword(this.password);
 
   next();
 });
