@@ -28,15 +28,14 @@ UserSchema.method('toJSON', function() {
 
 UserSchema.pre('findOneAndUpdate', async function(next) {
   if (this._update.password) {
-    hashPassword(this._update.password);
+    this._update.password = await hashPassword(this._update.password);
   }
 
   next();
 });
 
 UserSchema.pre('save', async function(next) {
-  hashPassword(this.password);
-
+  this.password = await hashPassword(this.password);
   next();
 });
 
