@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const uuid = require('uuid');
-const { tasks } = require('./tasks/task.model');
 
 const BoardSchema = new mongoose.Schema({
   title: {
@@ -24,11 +23,6 @@ const BoardSchema = new mongoose.Schema({
 BoardSchema.method('toJSON', function() {
   const { __v, _id, ...object } = this.toObject();
   return { id: _id, ...object };
-});
-
-BoardSchema.post('findOneAndDelete', async (doc, next) => {
-  await tasks.deleteMany({ boardId: doc._id });
-  next();
 });
 
 const boards = mongoose.model('boards', BoardSchema);

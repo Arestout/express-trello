@@ -1,7 +1,5 @@
-const mongoose = require('mongoose');
 const { tasks } = require('./task.model');
 const { NotFoundError } = require('../../../common/errors/notFoundError');
-const { CONFLICT } = require('http-status-codes');
 
 const getAll = async boardId => {
   const boardTasks = await tasks.find({ boardId });
@@ -22,33 +20,23 @@ const getById = async id => {
 };
 
 const create = async taskData => {
-  const options = {
-    new: true,
-    upsert: true,
-    setDefaultsOnInsert: true
-  };
-
-  const task = await tasks.findOneAndUpdate(
-    { _id: mongoose.Types.ObjectId() },
-    taskData,
-    options
-  );
-  if (!task) {
-    throw new Error('Could not create task', CONFLICT);
-  }
+  const task = await tasks.create(taskData);
 
   return task;
 };
 
 const update = async (id, data) => {
   const query = { _id: id };
-  const options = { upsert: false, new: true };
+  const options = { upsert: false, new: true, runValidators: true };
   const task = await tasks.findOneAndUpdate(query, data, options);
 
   if (!task) throw new NotFoundError(`Could not update task with id ${id}`);
 
   return task;
 };
+
+const updateTasksUser = async userId =>
+  await tasks.updateMany({ userId }, { $set: { userId: null } });
 
 const remove = async id => {
   const task = await tasks.deleteOne({ _id: id });
@@ -58,10 +46,15 @@ const remove = async id => {
   return task;
 };
 
+const removeTasksByBoardId = async boardId =>
+  await tasks.deleteMany({ boardId });
+
 module.exports = {
   getAll,
   getById,
   create,
   update,
-  remove
+  remove,
+  removeTasksByBoardId,
+  updateTasksUser
 };

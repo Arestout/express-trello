@@ -12,17 +12,17 @@ const TaskSchema = new mongoose.Schema({
   },
   userId: {
     type: String,
-    required: true,
+    // required: true,
     default: null
   },
   boardId: {
     type: String,
-    required: true,
+    // required: true,
     default: null
   },
   columnId: {
     type: String,
-    required: true,
+    // required: true,
     default: null
   },
   order: {

@@ -1,15 +1,20 @@
-const { User } = require('../../../resources/users/user.model');
+const { User, users } = require('../../../resources/users/user.model');
 const { Board, boards } = require('../../../resources/boards/board.model');
 const { Task, tasks } = require('../../../resources/boards/tasks/task.model');
 const mongoose = require('mongoose');
-const usersRepo = require('../../../resources/users/user.db.repository');
+
 const DB = {
   users: [],
   boards: [],
   tasks: []
 };
 
-DB.users.push(new User(), new User(), new User());
+DB.users.push(
+  new User(),
+  new User(),
+  new User({ name: 'string', login: 'string', password: 'string' }),
+  new User({ name: 'admin', login: 'admin', password: 'admin' })
+);
 DB.boards.push(new Board(), new Board(), new Board());
 
 const addTasks = () => {
@@ -31,7 +36,7 @@ addTasks();
 
 (async () => {
   mongoose.connection.dropDatabase();
-  DB.users.forEach(async user => await usersRepo.create(user));
+  await Promise.all(DB.users.map(user => users.create(user)));
   await boards.insertMany(DB.boards);
   await tasks.insertMany(DB.tasks);
 })();
