@@ -11,8 +11,8 @@ const getById = async id => {
   return user;
 };
 
-const getByLogin = async login => {
-  const user = await users.findOne({ login });
+const getByProperty = async entry => {
+  const user = await users.findOne(entry);
 
   return user;
 };
@@ -42,4 +42,4 @@ const remove = async id => {
   return user;
 };
 
-module.exports = { getAll, getById, getByLogin, create, update, remove };
+module.exports = { getAll, getById, getByProperty, create, update, remove };

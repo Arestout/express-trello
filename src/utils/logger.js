@@ -61,7 +61,7 @@ const requestLogger = createLogger({
   ]
 });
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV === 'development') {
   const loggers = [validationLogger, notFoundLogger, requestLogger, authLogger];
   loggers.forEach(logger => logger.add(new transports.Console()));
 }

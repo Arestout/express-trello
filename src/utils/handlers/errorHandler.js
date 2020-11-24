@@ -24,7 +24,7 @@ const errorHandler = (error, req, res, next) => {
     case 'ValidationError':
       validationLogger.error(errorMessage);
       statusCode = BAD_REQUEST;
-      break;
+      return res.status(statusCode).send({ validationErrors: message });
 
     case 'AuthError':
       authLogger.error(errorMessage);

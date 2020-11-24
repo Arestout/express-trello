@@ -1,25 +1,41 @@
 const Ajv = require('ajv');
 const { ValidationError } = require('../../common/errors');
 const { BAD_REQUEST } = require('http-status-codes');
+const { checkIfEmailInUse, checkIfLoginInUse } = require('./checkEmailAndUser');
 
-const validator = schema => (req, res, next) => {
-  const ajv = new Ajv({ allErrors: true });
+const ajv = new Ajv({ allErrors: true, jsonPointers: true });
+require('ajv-errors')(ajv);
+
+const validator = schema => async (req, res, next) => {
   const validate = ajv.compile(schema);
   const valid = validate(req.body);
 
+  const errors = {};
+  const { email, login } = req.body;
+
   if (valid) {
+    const [isEmailInUse, isLoginInUse] = await Promise.all([
+      checkIfEmailInUse(email, errors),
+      checkIfLoginInUse(login, errors)
+    ]);
+
+    if (isEmailInUse || isLoginInUse) {
+      return next(new ValidationError(errors, BAD_REQUEST));
+    }
+
     return next();
   }
 
-  const errors = validate.errors.map(({ message }) => message).join(', ');
-  const body = JSON.stringify(req.body, null, 2);
-
-  next(
-    new ValidationError(
-      `${req.method}: ${req.originalUrl} [ ${errors} ]\n${body}`,
-      BAD_REQUEST
-    )
+  validate.errors.forEach(
+    ({ dataPath, message }) => (errors[dataPath.slice(1)] = message)
   );
+
+  await Promise.all([
+    checkIfEmailInUse(email, errors),
+    checkIfLoginInUse(login, errors)
+  ]);
+
+  next(new ValidationError(errors, BAD_REQUEST));
 };
 
 module.exports = validator;

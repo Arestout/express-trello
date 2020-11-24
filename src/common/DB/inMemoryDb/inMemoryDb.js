@@ -12,8 +12,18 @@ const DB = {
 DB.users.push(
   new User(),
   new User(),
-  new User({ name: 'string', login: 'string', password: 'string' }),
-  new User({ name: 'admin', login: 'admin', password: 'admin' })
+  new User({
+    name: 'string',
+    email: 'string@mail.com',
+    login: 'string',
+    password: 'string'
+  }),
+  new User({
+    name: 'admin',
+    email: 'admin@mail.com',
+    login: 'admin',
+    password: 'admin'
+  })
 );
 DB.boards.push(new Board(), new Board(), new Board());
 

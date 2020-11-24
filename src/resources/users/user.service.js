@@ -5,7 +5,7 @@ const getAll = () => usersRepo.getAll();
 
 const getById = id => usersRepo.getById(id);
 
-const getByLogin = login => usersRepo.getByLogin(login);
+const getByProperty = entry => usersRepo.getByProperty(entry);
 
 const create = user => usersRepo.create(user);
 
@@ -18,4 +18,4 @@ const remove = async userId => {
   return user;
 };
 
-module.exports = { getAll, getById, getByLogin, create, update, remove };
+module.exports = { getAll, getById, getByProperty, create, update, remove };

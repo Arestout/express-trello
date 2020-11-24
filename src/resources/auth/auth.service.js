@@ -6,7 +6,7 @@ const { FORBIDDEN } = require('http-status-codes');
 const { AuthError } = require('../../common/errors');
 
 const getToken = async (login, password) => {
-  const user = await usersRepo.getByLogin(login);
+  const user = await usersRepo.getByProperty({ login });
 
   if (!user) {
     throw new AuthError('Credentials are not valid', FORBIDDEN);
