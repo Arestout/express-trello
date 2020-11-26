@@ -16,13 +16,15 @@ DB.users.push(
     name: 'string',
     email: 'string@mail.com',
     login: 'string',
-    password: 'string'
+    password: 'string',
+    activationToken: 'string'
   }),
   new User({
     name: 'admin',
     email: 'admin@mail.com',
     login: 'admin',
-    password: 'admin'
+    password: 'admin',
+    activationToken: 'admin'
   })
 );
 DB.boards.push(new Board(), new Board(), new Board());

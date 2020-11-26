@@ -1,4 +1,4 @@
-const errorMessages = require('../../common/errors/errorMessages.json');
+const errorMessages = require('../../common/errors/errorMessages');
 
 const UserSchemaPut = {
   type: 'object',
@@ -33,6 +33,18 @@ const UserSchemaPut = {
 const UserSchemaPost = {
   ...UserSchemaPut,
   required: ['name', 'login', 'password', 'email']
+};
+
+const UserTokenSchema = {
+  properties: {
+    params: {
+      type: 'object',
+      properties: {
+        token: { type: 'string' }
+      },
+      required: ['token']
+    }
+  }
 };
 
 const BoardSchemaPut = {
@@ -86,6 +98,7 @@ const LoginSchema = {
 module.exports = {
   UserSchemaPost,
   UserSchemaPut,
+  UserTokenSchema,
   BoardSchemaPost,
   BoardSchemaPut,
   TaskSchemaPost,

@@ -1,12 +1,12 @@
 const router = require('express').Router();
 const {
   UserSchemaPost,
-  UserSchemaPut
+  UserSchemaPut,
+  UserTokenSchema
 } = require('../../utils/validator/schemas');
 const usersService = require('./user.service');
 const wrapAsync = require('../../utils/wrapAsync');
 const validator = require('../../utils/validator/validator');
-const checkEmailAndLogin = require('../../utils/validator/checkEmailAndUser');
 
 router.get(
   '/',
@@ -28,9 +28,19 @@ router.post(
   '/',
   [validator(UserSchemaPost)],
   wrapAsync(async (req, res) => {
-    const { login, password, email, name } = req.body;
-    const user = await usersService.create({ login, password, email, name });
+    const user = await usersService.create(req.body);
     res.status(200).send(user);
+  })
+);
+
+router.post(
+  '/token/:token',
+  [validator(UserTokenSchema)],
+  wrapAsync(async (req, res) => {
+    const { token } = req.params;
+
+    await usersService.activate(token);
+    res.send({ message: 'Account is activated' });
   })
 );
 

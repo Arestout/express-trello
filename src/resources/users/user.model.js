@@ -24,6 +24,15 @@ const UserSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true
+  },
+  inactive: {
+    type: Boolean,
+    required: true,
+    default: true
+  },
+  activationToken: {
+    type: String,
+    required: true
   }
 });
 
@@ -52,13 +61,15 @@ class User {
     name = 'USER',
     login = 'user',
     email = 'user@mail.com',
-    password = 'P@55w0rd'
+    password = 'P@55w0rd',
+    activationToken = 'testToken'
   } = {}) {
     this.id = id;
     this.name = name;
     this.login = login;
     this.email = email;
     this.password = password;
+    this.activationToken = activationToken;
   }
 
   static toResponse(user) {
