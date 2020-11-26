@@ -1,5 +1,7 @@
 const userService = require('../../resources/users/user.service');
 const errorMessages = require('../../common/errors/errorMessages');
+const { ValidationError } = require('../../common/errors');
+const { BAD_REQUEST } = require('http-status-codes');
 
 const checkIfEmailInUse = async (email, errors) => {
   const userWithEmail = await userService.getByProperty({ email });
@@ -29,4 +31,21 @@ const checkIfLoginInUse = async (login, errors) => {
   return false;
 };
 
-module.exports = { checkIfEmailInUse, checkIfLoginInUse };
+const checkEmailAndUser = async (req, res, next) => {
+  const { email, login } = req.body;
+
+  const { errors } = req;
+
+  await Promise.all([
+    checkIfEmailInUse(email, errors),
+    checkIfLoginInUse(login, errors)
+  ]);
+
+  if (Object.keys(errors).length) {
+    return next(new ValidationError(errors, BAD_REQUEST));
+  }
+
+  next();
+};
+
+module.exports = checkEmailAndUser;

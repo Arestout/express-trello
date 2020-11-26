@@ -2,11 +2,14 @@
   "login_invalid": "Login should be type of string between 4 and 32 characters",
   "login_in_use": "Login is already in use",
   "email_invalid": "E-mail is not valid",
+  "email_not_verified": "Email is not verified",
   "password_size": "Password must be at least 6 characters",
   "password_pattern": "Password must have at least 1 uppercase, 1 lowercase letter, 1 number and 1 special character",
   "email_in_use": "E-mail is already in use",
   "email_failure": "E-mail Failure",
   "account_activation_failure": "This account is either active or the token is invalid",
-  "account_activation_success": "Account is activated"
+  "account_activation_success": "Account is activated",
+  "authentication_failure": "Credentials are not valid",
+  "credentials_invalid": "Credentials are not valid"
 }
 

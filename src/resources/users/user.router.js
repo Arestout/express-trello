@@ -7,6 +7,7 @@ const {
 const usersService = require('./user.service');
 const wrapAsync = require('../../utils/wrapAsync');
 const validator = require('../../utils/validator/validator');
+const checkEmailAndUser = require('../../utils/validator/checkEmailAndUser');
 
 router.get(
   '/',
@@ -26,7 +27,7 @@ router.get(
 
 router.post(
   '/',
-  [validator(UserSchemaPost)],
+  [validator(UserSchemaPost), checkEmailAndUser],
   wrapAsync(async (req, res) => {
     const user = await usersService.create(req.body);
     res.status(200).send(user);
