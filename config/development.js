@@ -3,10 +3,11 @@ module.exports = {
     mongoString: process.env.MONGO_CONNECTION_STRING
   },
   mail: {
-    host: 'localhost',
-    port: Math.floor(Math.random() * 2000) + 10000,
-    tls: {
-      rejectUnauthorized: false
+    host: 'smtp.ethereal.email',
+    port: 587,
+    auth: {
+      user: process.env.DEV_EMAIL_USER,
+      pass: process.env.DEV_EMAIL_PASS
     }
   }
 };

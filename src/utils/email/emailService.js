@@ -3,6 +3,7 @@ const transporter = require('../../common/emailTransporter');
 const { infoLogger } = require('../logger');
 
 const sendAccountActivation = async (email, token) => {
+  console.log({ email });
   const info = await transporter.sendMail({
     from: 'My App <info@my-app.com>',
     to: email,

@@ -9,7 +9,8 @@
   "description": "REST service starter for RS School",
   "main": "src/server.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=development nodemon src/server.js",
+    "start:dev": "cross-env NODE_ENV=development nodemon src/server.js",
+    "start": "cross-env NODE_ENV=production pm2 start src/server.js --watch -i 0",
     "lint": "eslint ./ --ignore-path .gitignore --fix",
     "test": "cross-env NODE_ENV=testing jest --no-cache --runInBand --detectOpenHandles --testTimeout=10000 --watch",
     "test:e2e": "cross-env DEBUG=rs:* jest --testMatch \"<rootDir>/test/e2e/test/*.test.js\" --noStackTrace",
