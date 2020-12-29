@@ -28,7 +28,9 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Request Logger
-app.use(requestLoggerHandler);
+if (process.env.NODE_ENV !== 'testing') {
+  app.use(requestLoggerHandler);
+}
 
 // Routes
 app.use('/', (req, res, next) => {
@@ -40,10 +42,10 @@ app.use('/', (req, res, next) => {
 });
 
 app.use('/login', authRouter);
-app.use(authorize);
+
 app.use('/users', userRouter);
-app.use('/boards', boardRouter);
-boardRouter.use('/:boardId/tasks', taskRouter);
+app.use('/boards', [authorize], boardRouter);
+boardRouter.use('/:boardId/tasks', [authorize], taskRouter);
 
 app.use('*', (req, res, next) => {
   const error = new NotFoundError(
@@ -53,6 +55,7 @@ app.use('*', (req, res, next) => {
 });
 
 // Error Handler
+
 app.use(errorHandler);
 
 module.exports = app;

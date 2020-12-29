@@ -6,16 +6,31 @@ const UserSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    minlength: 3,
+    minlength: 4,
     maxlength: 30
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true
   },
   login: {
     type: String,
     required: true,
+    unique: true,
     minlength: 3,
     maxlength: 30
   },
   password: {
+    type: String,
+    required: true
+  },
+  inactive: {
+    type: Boolean,
+    required: true,
+    default: true
+  },
+  activationToken: {
     type: String,
     required: true
   }
@@ -45,12 +60,16 @@ class User {
     id = uuid(),
     name = 'USER',
     login = 'user',
-    password = 'P@55w0rd'
+    email = 'user@mail.com',
+    password = 'P@55w0rd',
+    activationToken = 'testToken'
   } = {}) {
     this.id = id;
     this.name = name;
     this.login = login;
+    this.email = email;
     this.password = password;
+    this.activationToken = activationToken;
   }
 
   static toResponse(user) {

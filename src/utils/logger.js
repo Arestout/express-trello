@@ -61,7 +61,13 @@ const requestLogger = createLogger({
   ]
 });
 
-if (process.env.NODE_ENV !== 'production') {
+const infoLogger = createLogger({
+  format: combine(timestamp(), logFormat),
+  level: 'info',
+  transports: [new transports.Console()]
+});
+
+if (process.env.NODE_ENV === 'development') {
   const loggers = [validationLogger, notFoundLogger, requestLogger, authLogger];
   loggers.forEach(logger => logger.add(new transports.Console()));
 }
@@ -71,5 +77,6 @@ module.exports = {
   notFoundLogger,
   validationLogger,
   authLogger,
-  requestLogger
+  requestLogger,
+  infoLogger
 };

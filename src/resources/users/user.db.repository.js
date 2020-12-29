@@ -1,5 +1,7 @@
+const createError = require('http-errors');
 const { users } = require('./user.model');
 const { NotFoundError } = require('../../common/errors/notFoundError');
+const errorMessages = require('../../common/errors/errorMessages');
 
 const getAll = async () => await users.find();
 
@@ -11,14 +13,14 @@ const getById = async id => {
   return user;
 };
 
-const getByLogin = async login => {
-  const user = await users.findOne({ login });
+const getByProperty = async entry => {
+  const user = await users.findOne(entry);
 
   return user;
 };
 
-const create = async userData => {
-  const user = await users.create(userData);
+const create = async (userData, session) => {
+  const user = await users.create([userData], { session });
 
   return user;
 };
@@ -42,4 +44,26 @@ const remove = async id => {
   return user;
 };
 
-module.exports = { getAll, getById, getByLogin, create, update, remove };
+const activate = async token => {
+  const query = { activationToken: token };
+  const data = { inactive: false, activationToken: null };
+  const options = { upsert: false, new: true };
+
+  const user = await users.findOneAndUpdate(query, data, options);
+
+  if (!user) {
+    throw new createError.BadRequest(errorMessages.account_activation_failure);
+  }
+
+  return user;
+};
+
+module.exports = {
+  getAll,
+  getById,
+  getByProperty,
+  create,
+  update,
+  remove,
+  activate
+};

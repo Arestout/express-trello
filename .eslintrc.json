@@ -318,7 +318,8 @@
     "overrides": [
         {
             "files": [
-                "test/**/*.js"
+                "test/**/*.js",
+                "**/*.test.js"
             ],
             "rules": {
                 "node/no-unpublished-require": "off",

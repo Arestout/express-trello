@@ -22,6 +22,7 @@ const requestLoggerHandler = (req, res, next) => {
       body ? `\nBody: ${body}` : ''
     }`
   );
+
   next();
 };
 
