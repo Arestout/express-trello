@@ -6,6 +6,12 @@ const {
 const boardsService = require('./board.service');
 const wrapAsync = require('../../utils/wrapAsync');
 const validator = require('../../utils/validator/validator');
+const {
+  cache,
+  setCache,
+  updateCache,
+  deleteCache
+} = require('../../utils/cache/cache');
 
 router.get(
   '/',
@@ -17,9 +23,11 @@ router.get(
 
 router.get(
   '/:boardId',
+  [cache],
   wrapAsync(async (req, res) => {
     const { boardId } = req.params;
     const board = await boardsService.getById(boardId);
+    await setCache(boardId, board);
     res.status(200).send(board);
   })
 );
@@ -40,6 +48,7 @@ router.put(
   wrapAsync(async (req, res) => {
     const { boardId } = req.params;
     const board = await boardsService.update(boardId, req.body);
+    await updateCache(boardId, board);
     res.status(200).send(board);
   })
 );
@@ -49,6 +58,7 @@ router.delete(
   wrapAsync(async (req, res) => {
     const { boardId } = req.params;
     await boardsService.remove(boardId);
+    await deleteCache(boardId);
     res.sendStatus(204);
   })
 );

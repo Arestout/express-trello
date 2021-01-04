@@ -8,6 +8,12 @@ const usersService = require('./user.service');
 const wrapAsync = require('../../utils/wrapAsync');
 const validator = require('../../utils/validator/validator');
 const checkEmailAndUser = require('../../utils/validator/checkEmailAndUser');
+const {
+  cache,
+  setCache,
+  updateCache,
+  deleteCache
+} = require('../../utils/cache/cache');
 
 router.get(
   '/',
@@ -19,8 +25,11 @@ router.get(
 
 router.get(
   '/:id',
+  [cache],
   wrapAsync(async (req, res) => {
-    const user = await usersService.getById(req.params.id);
+    const { id } = req.params;
+    const user = await usersService.getById(id);
+    await setCache(id, user);
     res.status(200).send(user);
   })
 );
@@ -49,7 +58,9 @@ router.put(
   '/:id',
   [validator(UserSchemaPut)],
   wrapAsync(async (req, res) => {
-    const user = await usersService.update(req.params.id, req.body);
+    const { id } = req.params;
+    const user = await usersService.update(id, req.body);
+    await updateCache(id, user);
     res.status(200).send(user);
   })
 );
@@ -57,7 +68,9 @@ router.put(
 router.delete(
   '/:id',
   wrapAsync(async (req, res) => {
-    await usersService.remove(req.params.id);
+    const { id } = req.params;
+    await usersService.remove(id);
+    await deleteCache(id);
     res.sendStatus(204);
   })
 );

@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  api:
+    build: ./
+    container_name: trello-clone
+    command: ['node', 'src/server.js']
+    restart: unless-stopped
+    ports:
+      - '4000:4000'
+    environment:
+      - NODE_ENV=production
+      - PORT=${PORT}
+      - MONGO_CONNECTION_STRING=${MONGO_CONNECTION_STRING}
+      - REDIS_HOST=redis
+      - DEV_EMAIL_USER=${DEV_EMAIL_USER}
+      - DEV_EMAIL_PASS=${DEV_EMAIL_PASS}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+    depends_on:
+      - redis
+    networks:
+      - trello-clone-network
+
+  redis:
+    container_name: trello-clone-redis
+    image: redis:alpine
+    command: redis-server
+    volumes:
+      - redis_api:/data/redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    networks:
+      - trello-clone-network
+
+volumes:
+  redis_api:
+
+networks:
+  trello-clone-network:
+    driver: bridge

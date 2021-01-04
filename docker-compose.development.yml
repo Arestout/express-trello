@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  api:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./
+    command: npm run start:dev
+    volumes:
+      - ./src:/usr/src/app/src
+    environment:
+      - NODE_ENV=development
+      - MONGO_CONNECTION_STRING_TEST=${MONGO_CONNECTION_STRING_TEST}

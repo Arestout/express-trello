@@ -6,6 +6,12 @@ const {
 const tasksService = require('./task.service');
 const wrapAsync = require('../../../utils/wrapAsync');
 const validator = require('../../../utils/validator/validator');
+const {
+  cache,
+  setCache,
+  updateCache,
+  deleteCache
+} = require('../../../utils/cache/cache');
 
 router.get(
   '/',
@@ -17,9 +23,11 @@ router.get(
 
 router.get(
   '/:taskId',
+  [cache],
   wrapAsync(async (req, res) => {
     const { taskId } = req.params;
     const task = await tasksService.getById(taskId);
+    await setCache(taskId, task);
     res.status(200).send(task);
   })
 );
@@ -40,6 +48,7 @@ router.put(
   wrapAsync(async (req, res) => {
     const { taskId } = req.params;
     const task = await tasksService.update(taskId, req.body);
+    await updateCache(taskId, task);
     res.status(200).send(task);
   })
 );
@@ -49,6 +58,7 @@ router.delete(
   wrapAsync(async (req, res) => {
     const { taskId } = req.params;
     await tasksService.remove(taskId);
+    await deleteCache(taskId);
     res.sendStatus(204);
   })
 );
